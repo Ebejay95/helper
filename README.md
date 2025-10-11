@@ -446,3 +446,75 @@ func isValid(s string) bool {
     return len(stack) == 0
 }
 ```
+| **JSON Parser** |
+```go
+package json_parser
+
+// NewJSONParser erstellt einen neuen Parser für den gegebenen Input.
+func NewJSONParser(input string) *JSONParser { return nil }
+
+// tokenize zerlegt den Input in Tokens.
+func (p *JSONParser) tokenize() {}
+
+// current gibt das aktuelle Byte an der Leseposition zurück.
+func (p *JSONParser) current() byte { return 0 }
+
+// advance bewegt die Leseposition um ein Zeichen weiter.
+func (p *JSONParser) advance() {}
+
+// skipWhitespace überspringt Leerzeichen/Whitespace.
+func (p *JSONParser) skipWhitespace() {}
+
+// nextToken liest das nächste Token aus dem Input.
+func (p *JSONParser) nextToken() Token { return Token{} }
+
+// readString liest einen String (inkl. Escape-Handling).
+func (p *JSONParser) readString() Token { return Token{} }
+
+// readNumber liest eine Zahl (inkl. optionalem Minus und Dezimalteil).
+func (p *JSONParser) readNumber() Token { return Token{} }
+
+// readTrue liest das Literal true.
+func (p *JSONParser) readTrue() Token { return Token{} }
+
+// readFalse liest das Literal false.
+func (p *JSONParser) readFalse() Token { return Token{} }
+
+// readNull liest das Literal null.
+func (p *JSONParser) readNull() Token { return Token{} }
+
+// currentToken gibt das aktuelle Token im Token-Stream zurück.
+func (p *JSONParser) currentToken() Token { return Token{} }
+
+// consumeToken verbraucht das aktuelle Token und rückt weiter.
+func (p *JSONParser) consumeToken() Token { return Token{} }
+
+// expectToken erwartet ein bestimmtes Token und verbraucht es.
+func (p *JSONParser) expectToken(expectedType TokenType) error { return nil }
+
+// Parse startet den Parse-Vorgang (Recursive Descent) für den gesamten Input.
+func (p *JSONParser) Parse() error { return nil }
+
+// parseValue parst einen JSON-Wert (String, Number, Boolean, Null, Objekt, Array).
+func (p *JSONParser) parseValue() error { return nil }
+
+// parseObject parst ein JSON-Objekt { ... }.
+func (p *JSONParser) parseObject() error { return nil }
+
+// parseKeyValue parst ein Key-Value-Paar innerhalb eines Objekts.
+func (p *JSONParser) parseKeyValue() error { return nil }
+
+// parseArray parst ein JSON-Array [ ... ].
+func (p *JSONParser) parseArray() error { return nil }
+
+// IsValidJSON prüft, ob ein String gültiges JSON ist.
+func IsValidJSON(jsonStr string) bool { p.advance() return false }
+
+// ShowTokens gibt die erzeugten Tokens zu einem JSON-String aus.
+func ShowTokens(jsonStr string) {}
+
+// TestTokenizedParser führt einige Beispieltests gegen den Parser aus.
+func TestTokenizedParser() {}
+```
+
+
