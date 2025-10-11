@@ -516,5 +516,383 @@ func ShowTokens(jsonStr string) {}
 // TestTokenizedParser führt einige Beispieltests gegen den Parser aus.
 func TestTokenizedParser() {}
 ```
+**Markdown**
+```go
+package markdown
+
+// ---- Tokens ---------------------------------------------------------------
+
+// TokenType definiert die Token-Arten für ein Markdown-Subset.
+type TokenType int
+
+const (
+	// Blöcke
+	TOK_HEADING TokenType = iota // '#'..'######' + Text (ATX)
+	TOK_PARAGRAPH                // laufender Text
+	TOK_CODE_FENCE               // ``` oder ~~~ (Beginn/Ende)
+	TOK_BLOCKQUOTE               // '>'
+	TOK_UL_ITEM                  // '-', '*', '+'
+	TOK_OL_ITEM                  // '1.' '2.' ...
+	TOK_HRULE                    // '---' '***' '___'
+
+	// Inline
+	TOK_TEXT         // normaler Text
+	TOK_EMPH_OPEN    // '*', '_' (einfach)
+	TOK_EMPH_CLOSE
+	TOK_STRONG_OPEN  // '**', '__'
+	TOK_STRONG_CLOSE
+	TOK_CODE_SPAN    // `code`
+	TOK_LINK_OPEN    // '['
+	TOK_LINK_CLOSE   // ']'
+	TOK_PAREN_OPEN   // '('
+	TOK_PAREN_CLOSE  // ')'
+	TOK_IMAGE_BANG   // '!'
+
+	// Steuerung
+	TOK_NEWLINE
+	TOK_EOF
+	TOK_INVALID
+)
+
+// Token repräsentiert ein Lexem aus der Eingabe.
+type Token struct {
+	Type     TokenType
+	Value    string // z.B. Textinhalt, Fence-Sequenz, Heading-Hashes
+	Position int    // Byte-Offset
+}
+
+// ---- AST ------------------------------------------------------------------
+
+// NodeType für die AST-Knoten.
+type NodeType int
+
+const (
+	N_DOCUMENT NodeType = iota
+	N_HEADING
+	N_PARAGRAPH
+	N_TEXT
+	N_EMPH
+	N_STRONG
+	N_CODE_SPAN
+	N_CODE_BLOCK
+	N_LINK
+	N_IMAGE
+	N_BLOCKQUOTE
+	N_LIST_UNORDERED
+	N_LIST_ORDERED
+	N_LIST_ITEM
+	N_HORIZONTAL_RULE
+)
+
+// Node ist ein AST-Knoten.
+type Node struct {
+	Type     NodeType
+	Literal  string            // z.B. Text, Code, URL, Title
+	Level    int               // z.B. Heading-Level, Listen-Start
+	Attrs    map[string]string // z.B. href/title/alt/lang
+	Children []*Node
+}
+
+// ---- Lexer ----------------------------------------------------------------
+
+// Lexer zerlegt Eingabetext in Tokens (zeilen- und inline-basiert).
+type Lexer struct {
+	input string
+	pos   int
+	line  int
+	col   int
+}
+
+// NewLexer erstellt einen neuen Lexer.
+func NewLexer(input string) *Lexer { return nil }
+
+// NextToken liefert das nächste Token (kombiniert Block- und Inline-Erkennung).
+func (l *Lexer) NextToken() Token { return Token{} }
+
+// peek/advance-Helfer: Zeichennavigation.
+func (l *Lexer) current() byte { return 0 }
+func (l *Lexer) advance()      {}
+func (l *Lexer) startsWith(s string) bool { return false }
+
+// skipWhitespace am Zeilenanfang (Indentation, Spaces).
+func (l *Lexer) skipWhitespace() {}
+
+// scanLine liest bis zum Zeilenende.
+func (l *Lexer) scanLine() string { return "" }
+
+// scanBlock erkennt Blockkonstrukte (Heading, Lists, Quote, Fence, HR).
+func (l *Lexer) scanBlock() Token { return Token{} }
+
+// scanInline zerlegt eine Zeile in Inline-Tokens (emph/strong/code/link).
+func (l *Lexer) scanInline(line string) []Token { return nil }
+
+// ---- Parser ---------------------------------------------------------------
+
+// Parser wandelt Token-Stream in einen AST um.
+type Parser struct {
+	lexer       *Lexer
+	buffer      []Token // Lookahead-Puffer (für Inline/Block-Wechsel)
+	currentTok  Token
+	peeked      bool
+}
+
+// NewParser erstellt einen neuen Parser.
+func NewParser(input string) *Parser { return nil }
+
+// Parse parst das gesamte Dokument und gibt die Wurzel zurück.
+func (p *Parser) Parse() (*Node, error) { return nil, nil }
+
+// consume/peek-Helfer für Token-Fluss.
+func (p *Parser) next() Token { return Token{} }
+func (p *Parser) peek() Token { return Token{} }
+func (p *Parser) expect(tt TokenType) (Token, error) { return Token{}, nil }
+
+// parseDocument parst fortlaufend Blöcke bis EOF.
+func (p *Parser) parseDocument() (*Node, error) { return nil, nil }
+
+// ---- Block-Parser ----
+
+// parseHeading parst ATX-Überschriften.
+func (p *Parser) parseHeading() (*Node, error) { return nil, nil }
+
+// parseParagraph parst einen Absatz (inkl. inline).
+func (p *Parser) parseParagraph() (*Node, error) { return nil, nil }
+
+// parseBlockquote parst verschachtelte Blockquotes.
+func (p *Parser) parseBlockquote() (*Node, error) { return nil, nil }
+
+// parseList parst geordnete/ungeordnete Listen inkl. Verschachtelung.
+func (p *Parser) parseList(ordered bool) (*Node, error) { return nil, nil }
+
+// parseListItem parst ein einzelnes Listenelement (inkl. Folgeblöcke).
+func (p *Parser) parseListItem() (*Node, error) { return nil, nil }
+
+// parseCodeFence parst fenced code blocks (```lang ... ```).
+func (p *Parser) parseCodeFence() (*Node, error) { return nil, nil }
+
+// parseHorizontalRule parst HR.
+func (p *Parser) parseHorizontalRule() (*Node, error) { return nil, nil }
+
+// ---- Inline-Parser ----
+
+// parseInline wandelt Inline-Tokens in eine Node-Liste (Text, Emph, Strong, Link, CodeSpan).
+func (p *Parser) parseInline(inlineTokens []Token) ([]*Node, error) { return nil, nil }
+
+// parseEmphasis parst *emph* und **strong** (inkl. verschachtelt).
+func (p *Parser) parseEmphasis(tokens []Token, i int) (node *Node, next int, err error) {
+	return nil, i, nil
+}
+
+// parseCodeSpan parst `code`.
+func (p *Parser) parseCodeSpan(tokens []Token, i int) (node *Node, next int, err error) {
+	return nil, i, nil
+}
+
+// parseLinkOrImage parst [text](url "title") bzw. ![alt](src "title").
+func (p *Parser) parseLinkOrImage(tokens []Token, i int) (node *Node, next int, err error) {
+	return nil, i, nil
+}
+
+// ---- Öffentliche API / Utils ---------------------------------------------
+
+// ParseMarkdown parst Markdown-Text in einen AST.
+func ParseMarkdown(input string) (*Node, error) { return nil, nil }
+
+// RenderText rendert den AST zurück in Klartext (für Tests).
+func RenderText(n *Node) string { return "" }
+
+// IsValidMarkdown prüft minimal, ob Parsen ohne Fehler möglich ist.
+func IsValidMarkdown(input string) bool { return false }
+
+// ShowTokens gibt die Tokenfolge aus (Debug).
+func ShowTokens(input string) {}
+
+// Walk ruft fn für jeden Knoten im AST (Preorder) auf.
+func Walk(n *Node, fn func(*Node)) {}
+
+// FindAll sucht alle Knoten eines Typs im AST.
+func FindAll(n *Node, t NodeType) []*Node { return nil }
+```
+**JSON to NOde**
+```go
+package json_parser
+
+// --- Tokens / Lexer ---
+
+// TokenType beschreibt die möglichen JSON-Tokens.
+type TokenType int
+
+const (
+	STRING TokenType = iota
+	NUMBER
+	BOOLEAN_TRUE
+	BOOLEAN_FALSE
+	NULL
+	LBRACE    // {
+	RBRACE    // }
+	LBRACKET  // [
+	RBRACKET  // ]
+	COLON     // :
+	COMMA     // ,
+	EOF
+	INVALID
+)
+
+// Token repräsentiert ein Token aus dem Lexer.
+type Token struct {
+	Type     TokenType
+	Value    string
+	Position int
+}
+
+// JSONParser hält Input, Tokenliste und Parsing-Position.
+type JSONParser struct {
+	input             string
+	pos               int
+	tokens            []Token
+	currentTokenIndex int
+	debug             bool
+	lastErr           error
+}
+
+// NewJSONParser erstellt einen Parser für den gegebenen Input.
+func NewJSONParser(input string) *JSONParser { return &JSONParser{input: input} }
+
+// tokenize zerlegt den Input in Tokens.
+func (p *JSONParser) tokenize()                           {}
+func (p *JSONParser) current() byte                       { return 0 }
+func (p *JSONParser) advance()                            {}
+func (p *JSONParser) skipWhitespace()                     {}
+func (p *JSONParser) nextToken() Token                    { return Token{} }
+func (p *JSONParser) readString() Token                   { return Token{} }
+func (p *JSONParser) readNumber() Token                   { return Token{} }
+func (p *JSONParser) readTrue() Token                     { return Token{} }
+func (p *JSONParser) readFalse() Token                    { return Token{} }
+func (p *JSONParser) readNull() Token                     { return Token{} }
+func (p *JSONParser) currentToken() Token                 { return Token{Type: EOF} }
+func (p *JSONParser) consumeToken() Token                 { return Token{Type: EOF} }
+func (p *JSONParser) expectToken(t TokenType) error       { return nil }
+func (p *JSONParser) EnableDebug(enable bool)             { p.debug = enable }
+func (p *JSONParser) LastError() error                    { return p.lastErr }
+
+// --- AST (Nodes) ---
+
+// NodeKind beschreibt die Knotenarten des JSON-AST.
+type NodeKind int
+
+const (
+	NodeObject NodeKind = iota
+	NodeArray
+	NodeString
+	NodeNumber
+	NodeBoolean
+	NodeNull
+)
+
+// Member ist ein Key-Value-Paar eines JSON-Objekts.
+type Member struct {
+	Key   string
+	Value *Node
+}
+
+// Node ist ein AST-Knoten für JSON.
+type Node struct {
+	Kind     NodeKind
+	Str      string    // für String-Literale
+	Num      float64   // für Zahlen
+	Bool     bool      // für true/false
+	Members  []Member  // für Objekte
+	Elements []*Node   // für Arrays
+	// Optional: Position/Span für bessere Fehlermeldungen
+	Start int
+	End   int
+}
+
+// --- Parser (Tokens -> AST) ---
+
+// Parse baut den AST für das komplette Dokument.
+func (p *JSONParser) Parse() (*Node, error) { return nil, nil }
+
+// parseValue parst einen beliebigen JSON-Wert.
+func (p *JSONParser) parseValue() (*Node, error) { return nil, nil }
+
+// parseObject parst ein Objekt { ... } und liefert NodeObject.
+func (p *JSONParser) parseObject() (*Node, error) { return nil, nil }
+
+// parseArray parst ein Array [ ... ] und liefert NodeArray.
+func (p *JSONParser) parseArray() (*Node, error) { return nil, nil }
+
+// --- Node-Helfer ---
+
+// NewStringNode erzeugt einen String-Knoten.
+func NewStringNode(s string) *Node { return &Node{Kind: NodeString, Str: s} }
+
+// NewNumberNode erzeugt einen Number-Knoten.
+func NewNumberNode(f float64) *Node { return &Node{Kind: NodeNumber, Num: f} }
+
+// NewBooleanNode erzeugt einen Boolean-Knoten.
+func NewBooleanNode(b bool) *Node { return &Node{Kind: NodeBoolean, Bool: b} }
+
+// NewNullNode erzeugt einen Null-Knoten.
+func NewNullNode() *Node { return &Node{Kind: NodeNull} }
+
+// NewObjectNode erzeugt einen leeren Objekt-Knoten.
+func NewObjectNode() *Node { return &Node{Kind: NodeObject, Members: []Member{}} }
+
+// NewArrayNode erzeugt einen leeren Array-Knoten.
+func NewArrayNode() *Node { return &Node{Kind: NodeArray, Elements: []*Node{}} }
+
+// AddMember hängt ein Key-Value-Paar an ein Objekt.
+func (n *Node) AddMember(key string, val *Node) {}
+
+// AddElement hängt ein Element an ein Array.
+func (n *Node) AddElement(val *Node) {}
+
+// --- Öffentliche API ---
+
+// ParseJSONToAST: High-Level-Einstieg: Input -> AST.
+func ParseJSONToAST(jsonStr string) (*Node, error) {
+	p := NewJSONParser(jsonStr)
+	p.tokenize()
+	return p.Parse()
+}
+
+// IsValidJSON prüft ausschließlich auf Gültigkeit (ohne AST-Nutzung).
+func IsValidJSON(jsonStr string) bool {
+	ast, err := ParseJSONToAST(jsonStr)
+	_ = ast
+	return err == nil
+}
+
+// Walk traversiert den AST (Preorder) mit Tiefenangabe.
+func Walk(n *Node, depth int, visit func(*Node, int)) {
+	if n == nil || visit == nil {
+		return
+	}
+	visit(n, depth)
+	switch n.Kind {
+	case NodeObject:
+		for _, m := range n.Members {
+			Walk(m.Value, depth+1, visit)
+		}
+	case NodeArray:
+		for _, e := range n.Elements {
+			Walk(e, depth+1, visit)
+		}
+	}
+}
+
+// ToCompactJSON rendert den AST als kompaktes JSON (nützlich für Tests).
+func ToCompactJSON(n *Node) string { return "" }
+
+// ToPrettyJSON rendert den AST als formatiertes JSON (Indent).
+func ToPrettyJSON(n *Node, indent string) string { return "" }
+
+// ShowTokens gibt die Tokens (Debug).
+func ShowTokens(jsonStr string) {}
+
+// TestASTParser führt Beispieltests durch (Debug).
+func TestASTParser() {}
+```
 
 
