@@ -299,6 +299,13 @@ func reverse(x int) int {
 }
 ```
 | **Linked Lists – Head vs. Dummy Node** | Entferne das N-te Element von hinten, füge Knoten ein, merge sortiere Listen | 1️⃣ Wenn sich der Kopf der Liste ändern kann → **Dummy Node** verwenden. <br>2️⃣ Dummy zeigt auf den echten Kopf. So verlierst du ihn nie. <br>3️⃣ Arbeite mit Zeigern (`prev`, `curr`, `next`) und sichere `next` bevor du etwas veränderst. <br>4️⃣ Wenn du fertig bist, gib `dummy.Next` zurück. <br>➡️ **Erkennung:** Wenn du etwas am **Anfang** der Liste änderst → Dummy benutzen! |
+
+```go
+// fuer eine leere neue Liste zum returnrn
+    dummy := &ListNode{}
+    current := dummy
+    return dummy.Next
+```
 ```go
 func removeNthFromEnd(head *ListNode, n int) *ListNode {
     dummy := &ListNode{Next: head}
