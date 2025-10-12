@@ -901,5 +901,37 @@ func ShowTokens(jsonStr string) {}
 // TestASTParser führt Beispieltests durch (Debug).
 func TestASTParser() {}
 ```
-
+*Bitshifting*
+```go
+func divide(dividend int, divisor int) int {
+    signed := 1
+    count := 0
+    if dividend < 0 || divisor < 0 {
+        signed = -1
+    }
+    if dividend < 0 && divisor < 0 {
+        signed = 1
+    }
+    dividend = int(math.Abs(float64(dividend)))
+    divisor = int(math.Abs(float64(divisor)))
+    for dividend >= divisor {
+        divisorTrack := divisor
+        multiple := 1
+        for dividend >= (divisorTrack << 1) {
+            divisorTrack = divisorTrack << 1
+            multiple = multiple << 1
+        }
+        
+        dividend -= divisorTrack
+        count += multiple
+    }
+    if count * signed > math.MaxInt32 {
+        return math.MaxInt32
+    }
+    if count * signed < math.MinInt32 {
+        return math.MinInt32
+    }
+    return count * signed
+}
+```
 
