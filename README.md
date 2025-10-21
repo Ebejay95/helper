@@ -727,7 +727,7 @@ func search(nums []int, target int) int {
     right := len(nums) - 1
 
     for left <= right {
-        middle = left + (right - left) / 2
+        middle := left + (right - left) / 2
         if target == nums[middle] {
             return middle
         }
