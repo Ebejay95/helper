@@ -720,6 +720,27 @@ func Walk(n *Node, fn func(*Node)) {}
 // FindAll sucht alle Knoten eines Typs im AST.
 func FindAll(n *Node, t NodeType) []*Node { return nil }
 ```
+**Binary Search**
+```go
+func search(nums []int, target int) int {
+    left := 0
+    right := len(nums) - 1
+
+    for left <= right {
+        middle = left + (right - left) / 2
+        if target == nums[middle] {
+            return middle
+        }
+        if target < nums[middle] {
+            right = middle - 1
+        }
+        if target > nums[middle] {
+            left = middle + 1
+        }
+    }
+    return -1
+}
+```
 **JSON to NOde**
 ```go
 package json_parser
