@@ -383,7 +383,9 @@ func romanToInt(s string) int {
     return num
 }
 ```
-| **Backtracking – Permutationen** | Alle möglichen Anordnungen von Zahlen oder Buchstaben | 1️⃣ Du willst **alle Kombinationen**, also probiere alles aus. <br>2️⃣ Nutze eine Liste für das aktuelle Ergebnis (`path`). <br>3️⃣ Wenn das Ergebnis komplett ist (alle Elemente benutzt): speichere es. <br>4️⃣ Danach gehe einen Schritt zurück (**Backtrack**) und probiere den nächsten Weg. <br>➡️ **Erkennung:** Wenn du **„alle Möglichkeiten“** oder **„alle Reihenfolgen“** suchst. |
+| **Backtracking – Permutationen** | Alle möglichen Anordnungen von Zahlen oder Buchstaben | 
+how distiguish branches?
+condition
 ```go
 func backtrack(res *[]string, current string, opened int, closed int, n int) {
     if opened == n && closed == n {
