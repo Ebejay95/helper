@@ -385,7 +385,7 @@ func romanToInt(s string) int {
 ```
 | **Backtracking – Permutationen** | Alle möglichen Anordnungen von Zahlen oder Buchstaben | 
 how distiguish branches?
-condition
+how avoid duplicates?
 ```go
 func backtrack(res *[]string, current string, opened int, closed int, n int) {
     if opened == n && closed == n {
