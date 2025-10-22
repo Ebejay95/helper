@@ -383,6 +383,8 @@ func romanToInt(s string) int {
     return num
 }
 ```
+| **Regex, Pasrsing Backtrack** |
+walk backtrack trhoug strin
 | **Backtracking – Permutationen** | Alle möglichen Anordnungen von Zahlen oder Buchstaben | 
 how distiguish branches?
 
