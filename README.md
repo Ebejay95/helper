@@ -1201,8 +1201,47 @@ func (m *ItemManager) Count(itemType ItemType) int {
    - Weitere Elemente folgen nach einem `,`
    - `]` am Ende konsumieren
 
-5. **AST aufbauen**
-   - Für jedes geparste Element wird ein entsprechender Node erstellt
-   - Nodes werden zu Objekten und Arrays hinzugefügt
-   - Die Struktur bildet exakt die JSON-Struktur ab
+## AST (Abstract Syntax Tree) Aufbau
+
+1. **Knotentypen**
+   - `NodeObject`: Repräsentiert ein JSON-Objekt mit Schlüssel-Wert-Paaren
+   - `NodeArray`: Repräsentiert ein JSON-Array mit geordneten Elementen
+   - `NodeString`: Enthält einen String-Wert
+   - `NodeNumber`: Enthält einen numerischen Wert (als float64)
+   - `NodeBoolean`: Enthält einen Boolean-Wert (true/false)
+   - `NodeNull`: Repräsentiert den JSON-Wert null
+
+2. **Struktur der Knoten**
+   - Jeder Knoten hat eine `Kind`-Eigenschaft (NodeKind)
+   - Typ-spezifische Felder:
+     - `Str` für Strings
+     - `Num` für Zahlen
+     - `Bool` für Booleans
+     - `Members` für Objekte (Liste von Key-Value-Paaren)
+     - `Elements` für Arrays (Liste von Knoten)
+   - Optional: Position im Quelldokument (Start/End)
+
+3. **Objektknoten-Aufbau**
+   - `NewObjectNode()` erstellt leeres Objekt mit `Kind: NodeObject`
+   - `AddMember()` fügt Key-Value-Paar zur Member-Liste hinzu
+   - Schlüssel sind immer Strings
+   - Werte können beliebige Knoten sein (rekursive Struktur)
+
+4. **Array-Knoten-Aufbau**
+   - `NewArrayNode()` erstellt leeres Array mit `Kind: NodeArray`
+   - `AddElement()` fügt Element zur Element-Liste hinzu
+   - Elemente können beliebige Knoten sein (rekursive Struktur)
+
+5. **Primitive Knoten**
+   - `NewStringNode(s)`: Erstellt String-Knoten mit Wert `s`
+   - `NewNumberNode(f)`: Erstellt Number-Knoten mit Wert `f`
+   - `NewBooleanNode(b)`: Erstellt Boolean-Knoten mit Wert `b`
+   - `NewNullNode()`: Erstellt Null-Knoten
+
+6. **Baumstruktur**
+   - Wurzel ist ein beliebiger JSON-Wert (Objekt, Array, primitiv)
+   - Verschachtelung durch rekursive Referenzen:
+     - Objekt-Members verweisen auf weitere Knoten
+     - Array-Elements verweisen auf weitere Knoten
+   - Die Struktur spiegelt exakt die Hierarchie des JSON-Dokuments wider
 
