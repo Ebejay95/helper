@@ -1149,83 +1149,60 @@ func (m *ItemManager) Count(itemType ItemType) int {
 	return count
 }
 ```
-Hier ist das grundlegende schematische Vorgehen des JSON-Parsers in Stichpunkten:
-Tokenize-Prozess
+# JSON Parser - Grundlegendes Schema
 
-Initialisierung
+## Tokenize-Prozess
 
-Leere Token-Liste erstellen
-Position im Input auf 0 setzen
+1. **Initialisierung**
+   - Leere Token-Liste erstellen
+   - Position im Input auf 0 setzen
 
+2. **Hauptschleife**
+   - Whitespace überspringen
+   - Aktuelles Zeichen prüfen und entsprechendes Token erstellen
+   - Token zur Liste hinzufügen
+   - Position im Input vorwärts bewegen
+   - Bis EOF oder Ende des Inputs erreicht ist
 
-Hauptschleife
+3. **Token-Typen erkennen**
+   - Strukturzeichen direkt erkennen: `{`, `}`, `[`, `]`, `:`, `,`
+   - Strings mit `"` erkennen und Escape-Sequenzen verarbeiten
+   - Zahlen mit optionalem Vorzeichen, Dezimalteil und Exponent erkennen
+   - Literale erkennen: `true`, `false`, `null`
+   - Ungültige Zeichen als `INVALID` markieren
 
-Whitespace überspringen
-Aktuelles Zeichen prüfen und entsprechendes Token erstellen
-Token zur Liste hinzufügen
-Position im Input vorwärts bewegen
-Bis EOF oder Ende des Inputs erreicht ist
+4. **Abschluss**
+   - Sicherstellen, dass ein EOF-Token am Ende der Liste steht
 
+## Parse-Prozess
 
-Token-Typen erkennen
+1. **Initialisierung**
+   - Falls nötig, tokenize() aufrufen
+   - Token-Index auf 0 setzen
 
-Strukturzeichen direkt erkennen: {, }, [, ], :, ,
-Strings mit " erkennen und Escape-Sequenzen verarbeiten
-Zahlen mit optionalem Vorzeichen, Dezimalteil und Exponent erkennen
-Literale erkennen: true, false, null
-Ungültige Zeichen als INVALID markieren
+2. **Rekursiver Abstieg**
+   - Haupteinstieg ist parseValue()
+   - Basierend auf Token-Typ wird der entsprechende Parser aufgerufen:
+     - Strings, Zahlen, Booleans, null werden direkt in Knoten umgewandelt
+     - Für Objekte wird parseObject() aufgerufen
+     - Für Arrays wird parseArray() aufgerufen
 
+3. **Objekt-Parsing**
+   - `{` konsumieren
+   - Leeres Objekt erkennen oder Schlüssel-Wert-Paare parsen
+   - Jedes Paar besteht aus String-Key, `:` und einem beliebigen Wert
+   - Weitere Paare folgen nach einem `,`
+   - `}` am Ende konsumieren
 
-Abschluss
+4. **Array-Parsing**
+   - `[` konsumieren
+   - Leeres Array erkennen oder Werte parsen
+   - Jedes Element ist ein beliebiger JSON-Wert
+   - Weitere Elemente folgen nach einem `,`
+   - `]` am Ende konsumieren
 
-Sicherstellen, dass ein EOF-Token am Ende der Liste steht
+5. **AST aufbauen**
+   - Für jedes geparste Element wird ein entsprechender Node erstellt
+   - Nodes werden zu Objekten und Arrays hinzugefügt
+   - Die Struktur bildet exakt die JSON-Struktur ab
 
-
-
-Parse-Prozess
-
-Initialisierung
-
-Falls nötig, tokenize() aufrufen
-Token-Index auf 0 setzen
-
-
-Rekursiver Abstieg
-
-Haupteinstieg ist parseValue()
-Basierend auf Token-Typ wird der entsprechende Parser aufgerufen:
-
-Strings, Zahlen, Booleans, null werden direkt in Knoten umgewandelt
-Für Objekte wird parseObject() aufgerufen
-Für Arrays wird parseArray() aufgerufen
-
-
-
-
-Objekt-Parsing
-
-{ konsumieren
-Leeres Objekt erkennen oder Schlüssel-Wert-Paare parsen
-Jedes Paar besteht aus String-Key, : und einem beliebigen Wert
-Weitere Paare folgen nach einem ,
-} am Ende konsumieren
-
-
-Array-Parsing
-
-[ konsumieren
-Leeres Array erkennen oder Werte parsen
-Jedes Element ist ein beliebiger JSON-Wert
-Weitere Elemente folgen nach einem ,
-] am Ende konsumieren
-
-
-AST aufbauen
-
-Für jedes geparste Element wird ein entsprechender Node erstellt
-Nodes werden zu Objekten und Arrays hinzugefügt
-Die Struktur bildet exakt die JSON-Struktur ab
-
-
-
-Diese zwei Hauptphasen (Tokenize und Parse) trennen die syntaktische Analyse von der semantischen Interpretation und folgen dem klassischen Compiler-Design-Prinzip.
